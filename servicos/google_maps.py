@@ -1,7 +1,6 @@
 import requests
 from configuracao import Config
 
-
 def obter_dados_trafego():
 
     origem = "-23.550520,-46.633308"
@@ -19,6 +18,15 @@ def obter_dados_trafego():
     resposta = requests.get(url, params=params)
 
     dados = resposta.json()
+
+    print("RESPOSTA GOOGLE:")
+    print(dados)
+
+    if not dados.get("routes"):
+        return {
+            "erro": "Nenhuma rota encontrada",
+            "resposta_google": dados
+        }
 
     rota = dados["routes"][0]["legs"][0]
 

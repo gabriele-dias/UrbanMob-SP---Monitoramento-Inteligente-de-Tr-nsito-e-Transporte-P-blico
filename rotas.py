@@ -1,14 +1,22 @@
 from flask import Blueprint, jsonify
+from servicos.google_maps import obter_dados_trafego
 
 api = Blueprint("api", __name__)
 
-@api.route("/traffic", methods=["GET"])
-def obter_trafego():
+@api.route("/")
+def home():
+    return jsonify({
+        "api": "Transporte Urbano",
+        "status": "online"
+    })
 
-    dados = {
-        "congestionamento": "Alto",
-        "velocidade_media": 22,
-        "intensidade": "Intensa"
-    }
+@api.route("/status")
+def status():
+    return jsonify({
+        "status": "online"
+    })
 
+@api.route("/traffic")
+def traffic():
+    dados = obter_dados_trafego()
     return jsonify(dados)

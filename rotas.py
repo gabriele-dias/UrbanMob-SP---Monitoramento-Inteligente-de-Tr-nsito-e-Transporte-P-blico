@@ -20,3 +20,13 @@ def status():
 def traffic():
     dados = obter_dados_trafego()
     return jsonify(dados)
+
+@api.route("/traffic/<regiao>")
+def traffic_regiao(regiao):
+
+    return jsonify({
+        "regiao": regiao,
+        "congestionamento": "Alto",
+        "velocidade_media": 22,
+        "intensidade": "Intensa"
+    })

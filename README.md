@@ -1,68 +1,310 @@
-Tecnologias Utilizadas
-Front-end Mobile
+# API Transporte Urbano
 
-O aplicativo será desenvolvido para dispositivos Android utilizando o Android Studio, ambiente oficial de desenvolvimento para a plataforma Android. O Android Studio permitirá a criação das telas, navegação entre funcionalidades e integração com serviços externos.
+Projeto desenvolvido para a disciplina de Sistemas Distribuídos com o objetivo de disponibilizar informações de trânsito através de uma API REST desenvolvida em Python/Flask.
 
-Back-end
+## Objetivo
 
-O servidor da aplicação será desenvolvido em Python, utilizando o framework Flask para disponibilizar os serviços REST responsáveis pelo fornecimento das informações de trânsito e transporte urbano.
+Criar uma API capaz de fornecer informações sobre trânsito urbano para um aplicativo Android.
 
-APIs Externas
-Google Maps API
+Na primeira etapa foi implementado um endpoint simples utilizando dados simulados para validar a arquitetura da aplicação.
 
-A Google Maps API será utilizada para obtenção de informações relacionadas ao trânsito urbano, permitindo visualizar:
+---
 
-Nível de congestionamento;
-Velocidade média das vias;
-Intensidade do tráfego;
-Mapas interativos;
-Geolocalização.
-Infraestrutura
-Docker
+# Estrutura do Projeto
 
-O Docker será utilizado para padronizar o ambiente de execução da API, garantindo que o sistema funcione da mesma forma em qualquer computador, independentemente do sistema operacional utilizado.
+```text
+api-transporte-urbano/
+│
+├── app.py
+├── rotas.py
+├── configuracao.py
+├── .env
+│
+├── servicos/
+│   └── google_maps.py
+│
+└── requirements.txt
+```
 
-Comunicação
-HTTP/HTTPS
+---
 
-A comunicação entre o aplicativo Android e a API será realizada através dos protocolos HTTP e HTTPS, utilizando requisições REST e respostas em formato JSON.
+# Instalação
 
-Requisito Funcional RF01 - Consultar Trânsito
+## 1. Criar ambiente virtual
 
-Descrição:
- O sistema deverá permitir que o usuário consulte informações sobre o trânsito urbano em tempo real.
+```bash
+python -m venv venv
+```
 
-Funcionalidades:
+## 2. Ativar ambiente virtual
 
-Visualizar o nível de congestionamento das principais vias;
-Consultar a velocidade média dos veículos nas regiões monitoradas;
-Visualizar a intensidade do tráfego em tempo real;
-Exibir as informações em mapa interativo;
-Atualizar os dados automaticamente em intervalos pré-definidos.
+### Windows (Git Bash)
 
-Entrada:
+```bash
+source venv/Scripts/activate
+```
 
-Solicitação do usuário através do aplicativo.
+### Windows (PowerShell)
 
-Processamento:
+```powershell
+venv\Scripts\Activate.ps1
+```
 
-O aplicativo envia uma requisição para a API.
-A API consulta os dados do Google Maps.
-Os dados são processados e retornados ao aplicativo.
+## 3. Instalar dependências
 
-Saída:
+```bash
+pip install flask python-dotenv requests
+```
 
-Informações atualizadas sobre o trânsito exibidas na tela do dispositivo móvel.
-Fluxo do RF01
-Plain Text
+## 4. Gerar requirements
+
+```bash
+pip freeze > requirements.txt
+```
+
+---
+
+# Funcionamento da Aplicação
+
+A aplicação segue uma arquitetura Cliente-Servidor.
+
+```text
+Navegador
+    ↓
+Flask
+    ↓
+Rotas
+    ↓
+JSON
+```
+
+O navegador faz uma requisição HTTP para a API.
+
+O Flask recebe essa requisição, localiza a rota correspondente e retorna os dados em formato JSON.
+
+---
+
+# Arquivo app.py
+
+```python
+from flask import Flask
+from rotas import api
+
+app = Flask(__name__)
+
+app.register_blueprint(api)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+
+## Explicação
+
+### Importação do Flask
+
+```python
+from flask import Flask
+```
+
+Importa a classe Flask responsável por criar o servidor web.
+
+---
+
+### Importação das rotas
+
+```python
+from rotas import api
+```
+
+Importa as rotas definidas no arquivo `rotas.py`.
+
+---
+
+### Criação da aplicação
+
+```python
+app = Flask(__name__)
+```
+
+Cria uma instância da aplicação Flask.
+
+---
+
+### Registro das rotas
+
+```python
+app.register_blueprint(api)
+```
+
+Conecta as rotas criadas em `rotas.py` à aplicação principal.
+
+---
+
+### Inicialização do servidor
+
+```python
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+
+Inicia o servidor local na porta 5000.
+
+O parâmetro `debug=True` permite visualizar erros detalhados durante o desenvolvimento.
+
+---
+
+# Arquivo rotas.py
+
+```python
+from flask import Blueprint, jsonify
+
+api = Blueprint("api", __name__)
+
+@api.route("/traffic")
+def traffic():
+    return jsonify({
+        "congestionamento": "Alto",
+        "velocidade_media": 22,
+        "intensidade": "Intensa"
+    })
+```
+
+---
+
+## Explicação
+
+### Importação
+
+```python
+from flask import Blueprint, jsonify
+```
+
+- Blueprint organiza as rotas da aplicação.
+- jsonify converte objetos Python para JSON.
+
+---
+
+### Criação do Blueprint
+
+```python
+api = Blueprint("api", __name__)
+```
+
+Cria um agrupamento de rotas chamado "api".
+
+---
+
+### Definição da rota
+
+```python
+@api.route("/traffic")
+```
+
+Determina que a função abaixo será executada quando o usuário acessar:
+
+```text
+/traffic
+```
+
+---
+
+### Função traffic
+
+```python
+def traffic():
+```
+
+Responsável por processar a requisição.
+
+---
+
+### Retorno da resposta
+
+```python
+return jsonify({
+    "congestionamento": "Alto",
+    "velocidade_media": 22,
+    "intensidade": "Intensa"
+})
+```
+
+Retorna os dados em formato JSON.
+
+---
+
+# Fluxo da Requisição
+
+Quando o usuário acessa:
+
+```text
+http://127.0.0.1:5000/traffic
+```
+
+O seguinte processo acontece:
+
+```text
 Usuário
-↓
-Aplicativo Android
-↓
-API Transporte Urbano (Python/Flask)
-↓
-Google Maps API
-↓
-Retorno dos dados
-↓
-Exibição das informações de trânsito
+    ↓
+GET /traffic
+    ↓
+Flask
+    ↓
+Rotas
+    ↓
+Função traffic()
+    ↓
+jsonify()
+    ↓
+JSON
+    ↓
+Usuário
+```
+
+---
+
+# Resposta Atual
+
+```json
+{
+  "congestionamento": "Alto",
+  "velocidade_media": 22,
+  "intensidade": "Intensa"
+}
+```
+
+---
+
+# Tecnologias Utilizadas
+
+- Python
+- Flask
+- JSON
+- HTTP/HTTPS
+- Git
+- GitHub
+
+---
+
+# Próximos Passos
+
+## Sprint 2
+
+Implementar integração com a Google Maps API para substituir os dados simulados por informações reais de trânsito.
+
+## Sprint 3
+
+Containerização utilizando Docker.
+
+## Sprint 4
+
+Desenvolvimento do aplicativo Android.
+
+## Sprint 5
+
+Integração entre Android e API Flask.
+
+---
+
+
+
+Projeto acadêmico desenvolvido para a disciplina de Sistemas Distribuídos.

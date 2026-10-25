@@ -1,276 +1,10 @@
-# API Transporte Urbano
+# UrbanMob SP - Monitoramento Inteligente de Trânsito e Transporte Público
 
-Projeto desenvolvido para a disciplina de Sistemas Distribuídos com o objetivo de disponibilizar informações de trânsito através de uma API REST desenvolvida em Python/Flask.
+## Sobre o Projeto
 
-## Objetivo
+O UrbanMob SP é uma API REST desenvolvida em Python utilizando Flask para fornecer informações sobre trânsito urbano.
 
-Criar uma API capaz de fornecer informações sobre trânsito urbano para um aplicativo Android.
-
-Na primeira etapa foi implementado um endpoint simples utilizando dados simulados para validar a arquitetura da aplicação.
-
----
-
-# Estrutura do Projeto
-
-```text
-api-transporte-urbano/
-│
-├── app.py
-├── rotas.py
-├── configuracao.py
-├── .env
-│
-├── servicos/
-│   └── google_maps.py
-│
-└── requirements.txt
-```
-
----
-
-# Instalação
-
-## 1. Criar ambiente virtual
-
-```bash
-python -m venv venv
-```
-
-## 2. Ativar ambiente virtual
-
-### Windows (Git Bash)
-
-```bash
-source venv/Scripts/activate
-```
-
-### Windows (PowerShell)
-
-```powershell
-venv\Scripts\Activate.ps1
-```
-
-## 3. Instalar dependências
-
-```bash
-pip install flask python-dotenv requests
-```
-
-## 4. Gerar requirements
-
-```bash
-pip freeze > requirements.txt
-```
-
----
-
-# Funcionamento da Aplicação
-
-A aplicação segue uma arquitetura Cliente-Servidor.
-
-```text
-Navegador
-    ↓
-Flask
-    ↓
-Rotas
-    ↓
-JSON
-```
-
-O navegador faz uma requisição HTTP para a API.
-
-O Flask recebe essa requisição, localiza a rota correspondente e retorna os dados em formato JSON.
-
----
-
-# Arquivo app.py
-
-```python
-from flask import Flask
-from rotas import api
-
-app = Flask(__name__)
-
-app.register_blueprint(api)
-
-if __name__ == "__main__":
-    app.run(debug=True)
-```
-
-## Explicação
-
-### Importação do Flask
-
-```python
-from flask import Flask
-```
-
-Importa a classe Flask responsável por criar o servidor web.
-
----
-
-### Importação das rotas
-
-```python
-from rotas import api
-```
-
-Importa as rotas definidas no arquivo `rotas.py`.
-
----
-
-### Criação da aplicação
-
-```python
-app = Flask(__name__)
-```
-
-Cria uma instância da aplicação Flask.
-
----
-
-### Registro das rotas
-
-```python
-app.register_blueprint(api)
-```
-
-Conecta as rotas criadas em `rotas.py` à aplicação principal.
-
----
-
-### Inicialização do servidor
-
-```python
-if __name__ == "__main__":
-    app.run(debug=True)
-```
-
-Inicia o servidor local na porta 5000.
-
-O parâmetro `debug=True` permite visualizar erros detalhados durante o desenvolvimento.
-
----
-
-# Arquivo rotas.py
-
-```python
-from flask import Blueprint, jsonify
-
-api = Blueprint("api", __name__)
-
-@api.route("/traffic")
-def traffic():
-    return jsonify({
-        "congestionamento": "Alto",
-        "velocidade_media": 22,
-        "intensidade": "Intensa"
-    })
-```
-
----
-
-## Explicação
-
-### Importação
-
-```python
-from flask import Blueprint, jsonify
-```
-
-- Blueprint organiza as rotas da aplicação.
-- jsonify converte objetos Python para JSON.
-
----
-
-### Criação do Blueprint
-
-```python
-api = Blueprint("api", __name__)
-```
-
-Cria um agrupamento de rotas chamado "api".
-
----
-
-### Definição da rota
-
-```python
-@api.route("/traffic")
-```
-
-Determina que a função abaixo será executada quando o usuário acessar:
-
-```text
-/traffic
-```
-
----
-
-### Função traffic
-
-```python
-def traffic():
-```
-
-Responsável por processar a requisição.
-
----
-
-### Retorno da resposta
-
-```python
-return jsonify({
-    "congestionamento": "Alto",
-    "velocidade_media": 22,
-    "intensidade": "Intensa"
-})
-```
-
-Retorna os dados em formato JSON.
-
----
-
-# Fluxo da Requisição
-
-Quando o usuário acessa:
-
-```text
-http://127.0.0.1:5000/traffic
-```
-
-O seguinte processo acontece:
-
-```text
-Usuário
-    ↓
-GET /traffic
-    ↓
-Flask
-    ↓
-Rotas
-    ↓
-Função traffic()
-    ↓
-jsonify()
-    ↓
-JSON
-    ↓
-Usuário
-```
-
----
-
-# Resposta Atual
-
-```json
-{
-  "congestionamento": "Alto",
-  "velocidade_media": 22,
-  "intensidade": "Intensa"
-}
-```
+O objetivo do projeto é servir como backend para um aplicativo Android, utilizando conceitos de Sistemas Distribuídos por meio da comunicação entre cliente, servidor e serviços externos.
 
 ---
 
@@ -280,31 +14,364 @@ Usuário
 - Flask
 - JSON
 - HTTP/HTTPS
-- Git
-- GitHub
+- Requests
+- Python Dotenv
+- Git/GitHub
 
 ---
 
-# Próximos Passos
+# Estrutura do Projeto
+
+```text
+UrbanMob-SP/
+│
+├── app.py
+├── rotas.py
+├── configuracao.py
+├── .env
+│
+├── servicos/
+│   └── google_maps.py
+│
+├── requirements.txt
+│
+└── .venv/
+```
+
+---
+
+# Arquitetura
+
+```text
+Cliente
+(Navegador/Android)
+          ↓
+      Flask API
+          ↓
+       Rotas
+          ↓
+      Serviços
+          ↓
+ Google Maps API
+```
+
+---
+
+# Execução do Projeto
+
+## Criar ambiente virtual
+
+```bash
+python -m venv .venv
+```
+
+## Ativar ambiente
+
+Git Bash
+
+```bash
+source .venv/Scripts/activate
+```
+
+PowerShell
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+## Instalar dependências
+
+```bash
+pip install flask requests python-dotenv
+```
+
+## Gerar requirements
+
+```bash
+pip freeze > requirements.txt
+```
+
+---
+
+# app.py
+
+Responsável por iniciar a aplicação Flask.
+
+```python
+from flask import Flask
+from rotas import api
+
+app = Flask(__name__)
+
+app.register_blueprint(api)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+
+## O que faz
+
+- Cria o servidor Flask.
+- Importa as rotas.
+- Registra as rotas na aplicação.
+- Inicia o servidor local.
+
+---
+
+# rotas.py
+
+Responsável por receber requisições HTTP e devolver respostas.
+
+```python
+from flask import Blueprint, jsonify
+from servicos.google_maps import obter_dados_trafego
+
+api = Blueprint("api", __name__)
+```
+
+---
+
+## Rota Principal
+
+```python
+@api.route("/")
+def home():
+    return jsonify({
+        "api": "Transporte Urbano",
+        "status": "online"
+    })
+```
+
+### Endpoint
+
+```http
+GET /
+```
+
+### Resposta
+
+```json
+{
+  "api": "Transporte Urbano",
+  "status": "online"
+}
+```
+
+---
+
+## Verificação de Status
+
+```python
+@api.route("/status")
+def status():
+    return jsonify({
+        "status": "online"
+    })
+```
+
+### Endpoint
+
+```http
+GET /status
+```
+
+### Resposta
+
+```json
+{
+  "status": "online"
+}
+```
+
+---
+
+## Dados de Trânsito
+
+```python
+@api.route("/traffic")
+def traffic():
+
+    dados = obter_dados_trafego()
+
+    return jsonify(dados)
+```
+
+### Endpoint
+
+```http
+GET /traffic
+```
+
+### Fluxo
+
+```text
+Usuário
+    ↓
+/traffic
+    ↓
+rotas.py
+    ↓
+google_maps.py
+    ↓
+JSON
+    ↓
+Usuário
+```
+
+---
+
+# google_maps.py
+
+Responsável por buscar informações de trânsito.
+
+Atualmente o serviço já está preparado para consumir a API do Google Maps.
+
+```python
+import requests
+from configuracao import Config
+```
+
+---
+
+## Funcionamento
+
+1. Define origem e destino.
+2. Faz requisição para a API do Google.
+3. Recebe resposta JSON.
+4. Processa os dados.
+5. Retorna informações para a rota.
+
+---
+
+# Configuração da API Key
+
+Criar arquivo:
+
+```text
+.env
+```
+
+Conteúdo:
+
+```env
+GOOGLE_API_KEY=SUA_CHAVE_AQUI
+```
+
+---
+
+# configuracao.py
+
+```python
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+class Config:
+    GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+```
+
+## O que faz
+
+- Carrega variáveis do arquivo `.env`.
+- Disponibiliza a chave para toda a aplicação.
+
+---
+
+# Testes
+
+Iniciar servidor:
+
+```bash
+python app.py
+```
+
+Servidor:
+
+```text
+http://127.0.0.1:5000
+```
+
+---
+
+## Teste da Home
+
+```text
+http://127.0.0.1:5000/
+```
+
+---
+
+## Teste do Status
+
+```text
+http://127.0.0.1:5000/status
+```
+
+---
+
+## Teste do Trânsito
+
+```text
+http://127.0.0.1:5000/traffic
+```
+
+---
+
+# Problema Encontrado
+
+Durante a integração com a Google Maps API foi identificado o seguinte erro:
+
+```json
+{
+  "status": "REQUEST_DENIED"
+}
+```
+
+Causa:
+
+```text
+API Key não configurada
+```
+
+Solução:
+
+```text
+Criar uma chave no Google Cloud Platform
+e configurar o arquivo .env.
+```
+
+---
+
+# Próximas Etapas
 
 ## Sprint 2
 
-Implementar integração com a Google Maps API para substituir os dados simulados por informações reais de trânsito.
+- Configurar API Key do Google Maps.
+- Habilitar Routes API.
+- Consumir dados reais de trânsito.
 
 ## Sprint 3
 
-Containerização utilizando Docker.
+- Docker.
 
 ## Sprint 4
 
-Desenvolvimento do aplicativo Android.
+- Desenvolvimento Android.
 
 ## Sprint 5
 
-Integração entre Android e API Flask.
+- Integração Android + API Flask.
+
+## Sprint 6
+
+- Integração SPTrans.
+- Localização de ônibus em tempo real.
 
 ---
 
+# Autor
 
+Gabriel Dias
 
-Projeto acadêmico desenvolvido para a disciplina de Sistemas Distribuídos.
+Projeto desenvolvido para a disciplina de Sistemas Distribuídos (APS).

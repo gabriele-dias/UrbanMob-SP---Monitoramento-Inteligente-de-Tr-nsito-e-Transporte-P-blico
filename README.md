@@ -1,146 +1,130 @@
-# UrbanMob SP - Monitoramento Inteligente de Trânsito e Transporte Público
+# 🚦 UrbanMob SP - Monitoramento Inteligente de Trânsito e Transporte Público
 
-## Sobre o Projeto
+## 📖 Sobre o Projeto
 
-O UrbanMob SP é uma API REST desenvolvida em Python utilizando Flask para fornecer informações sobre trânsito urbano.
+O UrbanMob SP é uma API REST desenvolvida em Python utilizando Flask para fornecer informações sobre mobilidade urbana.
 
-O objetivo do projeto é servir como backend para um aplicativo Android, utilizando conceitos de Sistemas Distribuídos por meio da comunicação entre cliente, servidor e serviços externos.
+O objetivo do projeto é servir como backend para um aplicativo mobile desenvolvido em Flutter, aplicando conceitos de Sistemas Distribuídos por meio da comunicação entre cliente, servidor e serviços externos.
+
+O sistema será responsável por disponibilizar informações relacionadas a:
+
+- Trânsito urbano
+- Transporte público
+- Velocidade média por região
+- Intensidade do tráfego
+- Localização de ônibus
+- Alertas de mobilidade urbana
 
 ---
 
-# Tecnologias Utilizadas
+# 🛠 Tecnologias Utilizadas
+
+## Back-end
 
 - Python
 - Flask
-- JSON
-- HTTP/HTTPS
 - Requests
 - Python Dotenv
-- Git/GitHub
+
+## Mobile
+
+- Flutter
+- Dart
+
+## Infraestrutura
+
+- Docker
+- Docker Compose
+
+## Comunicação
+
+- HTTP
+- HTTPS
+- JSON
+
+## Controle de Versão
+
+- Git
+- GitHub
 
 ---
 
-# Estrutura do Projeto
+# 📁 Estrutura do Projeto
 
 ```text
 UrbanMob-SP/
+
+backend/
 │
 ├── app.py
 ├── rotas.py
 ├── configuracao.py
-├── .env
 │
 ├── servicos/
-│   └── google_maps.py
+│   ├── traffic.py
+│   └── sptrans.py
 │
 ├── requirements.txt
+├── Dockerfile
 │
-└── .venv/
+└── .env
+
+
+mobile/
+│
+├── lib/
+│   ├── screens/
+│   ├── widgets/
+│   ├── services/
+│   └── main.dart
+│
+└── pubspec.yaml
 ```
 
 ---
 
-# Arquitetura
+# 🏗 Arquitetura
 
 ```text
-Cliente
-(Navegador/Android)
-          ↓
-      Flask API
-          ↓
-       Rotas
-          ↓
-      Serviços
-          ↓
- Google Maps API
+Usuário
+    │
+    ▼
+Aplicativo Flutter
+    │
+    ▼
+API Flask
+    │
+    ▼
+Serviços
+    │
+    ▼
+Dados de Trânsito
+    │
+    ▼
+Resposta JSON
+    │
+    ▼
+Aplicativo Flutter
 ```
 
 ---
 
-# Execução do Projeto
+# 🎯 Objetivos da Sprint 1
 
-## Criar ambiente virtual
+Nesta etapa inicial o objetivo é construir a estrutura base da API.
 
-```bash
-python -m venv .venv
-```
+Funcionalidades desenvolvidas:
 
-## Ativar ambiente
-
-Git Bash
-
-```bash
-source .venv/Scripts/activate
-```
-
-PowerShell
-
-```powershell
-.venv\Scripts\Activate.ps1
-```
-
-## Instalar dependências
-
-```bash
-pip install flask requests python-dotenv
-```
-
-## Gerar requirements
-
-```bash
-pip freeze > requirements.txt
-```
+- Inicialização do servidor Flask
+- Organização em rotas e serviços
+- Retorno de dados simulados (Mock)
+- Testes locais via navegador e Postman
 
 ---
 
-# app.py
+# 🔗 Endpoints Disponíveis
 
-Responsável por iniciar a aplicação Flask.
-
-```python
-from flask import Flask
-from rotas import api
-
-app = Flask(__name__)
-
-app.register_blueprint(api)
-
-if __name__ == "__main__":
-    app.run(debug=True)
-```
-
-## O que faz
-
-- Cria o servidor Flask.
-- Importa as rotas.
-- Registra as rotas na aplicação.
-- Inicia o servidor local.
-
----
-
-# rotas.py
-
-Responsável por receber requisições HTTP e devolver respostas.
-
-```python
-from flask import Blueprint, jsonify
-from servicos.google_maps import obter_dados_trafego
-
-api = Blueprint("api", __name__)
-```
-
----
-
-## Rota Principal
-
-```python
-@api.route("/")
-def home():
-    return jsonify({
-        "api": "Transporte Urbano",
-        "status": "online"
-    })
-```
+## Home
 
 ### Endpoint
 
@@ -152,22 +136,14 @@ GET /
 
 ```json
 {
-  "api": "Transporte Urbano",
+  "api": "UrbanMob SP",
   "status": "online"
 }
 ```
 
 ---
 
-## Verificação de Status
-
-```python
-@api.route("/status")
-def status():
-    return jsonify({
-        "status": "online"
-    })
-```
+## Status
 
 ### Endpoint
 
@@ -185,7 +161,92 @@ GET /status
 
 ---
 
-## Dados de Trânsito
+## Trânsito Geral
+
+### Endpoint
+
+```http
+GET /traffic
+```
+
+### Resposta
+
+```json
+{
+  "cidade": "São Paulo",
+  "congestionamento": "Moderado",
+  "velocidade_media": 28,
+  "intensidade": "Normal"
+}
+```
+
+---
+
+## Trânsito por Região
+
+### Endpoint
+
+```http
+GET /traffic/<regiao>
+```
+
+### Exemplo
+
+```http
+GET /traffic/centro
+```
+
+### Resposta
+
+```json
+{
+  "regiao": "Centro",
+  "congestionamento": "Alto",
+  "velocidade_media": 18,
+  "intensidade": "Intensa"
+}
+```
+
+---
+
+# ⚙ Estrutura de Código
+
+## app.py
+
+Responsável pela inicialização da aplicação Flask.
+
+```python
+from flask import Flask
+from rotas import api
+
+app = Flask(__name__)
+
+app.register_blueprint(api)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+
+### Responsabilidades
+
+- Criar a aplicação Flask
+- Registrar as rotas
+- Inicializar o servidor
+
+---
+
+## rotas.py
+
+Responsável pelo recebimento das requisições HTTP e retorno das respostas.
+
+```python
+from flask import Blueprint, jsonify
+from servicos.traffic import obter_dados_trafego
+
+api = Blueprint("api", __name__)
+```
+
+### Exemplo
 
 ```python
 @api.route("/traffic")
@@ -196,70 +257,28 @@ def traffic():
     return jsonify(dados)
 ```
 
-### Endpoint
-
-```http
-GET /traffic
-```
-
-### Fluxo
-
-```text
-Usuário
-    ↓
-/traffic
-    ↓
-rotas.py
-    ↓
-google_maps.py
-    ↓
-JSON
-    ↓
-Usuário
-```
-
 ---
 
-# google_maps.py
+## traffic.py
 
-Responsável por buscar informações de trânsito.
-
-Atualmente o serviço já está preparado para consumir a API do Google Maps.
+Responsável pelas regras de negócio relacionadas ao trânsito.
 
 ```python
-import requests
-from configuracao import Config
+def obter_dados_trafego():
+
+    return {
+        "cidade": "São Paulo",
+        "congestionamento": "Moderado",
+        "velocidade_media": 28,
+        "intensidade": "Normal"
+    }
 ```
 
 ---
 
-## Funcionamento
+## configuracao.py
 
-1. Define origem e destino.
-2. Faz requisição para a API do Google.
-3. Recebe resposta JSON.
-4. Processa os dados.
-5. Retorna informações para a rota.
-
----
-
-# Configuração da API Key
-
-Criar arquivo:
-
-```text
-.env
-```
-
-Conteúdo:
-
-```env
-GOOGLE_API_KEY=SUA_CHAVE_AQUI
-```
-
----
-
-# configuracao.py
+Responsável pelo carregamento das variáveis de ambiente.
 
 ```python
 from dotenv import load_dotenv
@@ -268,25 +287,60 @@ import os
 load_dotenv()
 
 class Config:
-    GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+    APP_NAME = os.getenv("APP_NAME")
 ```
-
-## O que faz
-
-- Carrega variáveis do arquivo `.env`.
-- Disponibiliza a chave para toda a aplicação.
 
 ---
 
-# Testes
+# 🚀 Execução do Projeto
 
-Iniciar servidor:
+## Criar Ambiente Virtual
+
+```bash
+python -m venv .venv
+```
+
+---
+
+## Ativar Ambiente
+
+### Git Bash
+
+```bash
+source .venv/Scripts/activate
+```
+
+### PowerShell
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+---
+
+## Instalar Dependências
+
+```bash
+pip install flask requests python-dotenv
+```
+
+---
+
+## Gerar requirements.txt
+
+```bash
+pip freeze > requirements.txt
+```
+
+---
+
+## Executar Aplicação
 
 ```bash
 python app.py
 ```
 
-Servidor:
+Servidor disponível em:
 
 ```text
 http://127.0.0.1:5000
@@ -294,7 +348,9 @@ http://127.0.0.1:5000
 
 ---
 
-## Teste da Home
+# 🧪 Testes
+
+## Home
 
 ```text
 http://127.0.0.1:5000/
@@ -302,7 +358,7 @@ http://127.0.0.1:5000/
 
 ---
 
-## Teste do Status
+## Status
 
 ```text
 http://127.0.0.1:5000/status
@@ -310,7 +366,7 @@ http://127.0.0.1:5000/status
 
 ---
 
-## Teste do Trânsito
+## Trânsito
 
 ```text
 http://127.0.0.1:5000/traffic
@@ -318,60 +374,109 @@ http://127.0.0.1:5000/traffic
 
 ---
 
-# Problema Encontrado
-
-Durante a integração com a Google Maps API foi identificado o seguinte erro:
-
-```json
-{
-  "status": "REQUEST_DENIED"
-}
-```
-
-Causa:
+## Trânsito por Região
 
 ```text
-API Key não configurada
-```
-
-Solução:
-
-```text
-Criar uma chave no Google Cloud Platform
-e configurar o arquivo .env.
+http://127.0.0.1:5000/traffic/centro
 ```
 
 ---
 
-# Próximas Etapas
+# 🗺 Integrações Futuras
 
-## Sprint 2
+O projeto foi estruturado para permitir integração futura com serviços externos de mobilidade urbana.
 
-- Configurar API Key do Google Maps.
-- Habilitar Routes API.
-- Consumir dados reais de trânsito.
+Possíveis integrações:
 
-## Sprint 3
-
-- Docker.
-
-## Sprint 4
-
-- Desenvolvimento Android.
-
-## Sprint 5
-
-- Integração Android + API Flask.
-
-## Sprint 6
-
-- Integração SPTrans.
-- Localização de ônibus em tempo real.
+- OpenStreetMap
+- SPTrans
+- APIs de geolocalização
+- APIs de monitoramento urbano
+- Dados de transporte público em tempo real
 
 ---
 
-# Autor
+# 📦 Sprint 2
 
-Gabriel Dias
+## Objetivos
 
-Projeto desenvolvido para a disciplina de Sistemas Distribuídos (APS).
+- Integração OpenStreetMap
+- Estudo da API SPTrans
+- Mapeamento das regiões monitoradas
+- Criação dos serviços de geolocalização
+
+---
+
+# 🐳 Sprint 3
+
+## Objetivos
+
+- Dockerfile
+- Docker Compose
+- Execução isolada da API
+- Padronização do ambiente
+
+---
+
+# 📱 Sprint 4
+
+## Objetivos
+
+- Estrutura Flutter
+- Tela Home
+- Tela Trânsito
+- Tela Mapa
+
+---
+
+# 🔄 Sprint 5
+
+## Objetivos
+
+- Integração Flutter + Flask
+- Consumo dos endpoints
+- Atualização automática dos dados
+- Tratamento de erros
+
+---
+
+# 🚌 Sprint 6
+
+## Objetivos
+
+- Integração SPTrans
+- Consulta de linhas
+- Localização de ônibus
+- Atualização em tempo real
+
+---
+
+# 📊 Sprint 7
+
+## Objetivos
+
+- Dashboard Inteligente
+- Estatísticas de trânsito
+- Indicadores de mobilidade urbana
+- Relatórios e métricas
+
+---
+
+# 📚 Conceitos de Sistemas Distribuídos Aplicados
+
+O projeto utiliza conceitos fundamentais da disciplina de Sistemas Distribuídos:
+
+- Comunicação Cliente-Servidor
+- APIs REST
+- Protocolo HTTP/HTTPS
+- Transferência de dados em JSON
+- Integração entre sistemas heterogêneos
+- Arquitetura distribuída
+
+---
+
+# 👩‍💻 Autor
+
+**Gabriele Dias**
+
+Projeto desenvolvido para a disciplina de **Sistemas Distribuídos (APS)**.
